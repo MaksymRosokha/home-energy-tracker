@@ -17,7 +17,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public UserDto createUser(UserDto input){
+    public UserDto createUser(UserDto input) {
         log.info("Creating user: {}", input);
         final User createdUser = User.builder()
                 .name(input.getName())
@@ -32,7 +32,37 @@ public class UserService {
         return toDto(saved);
     }
 
-    private UserDto toDto(User user){
+    public UserDto getUserById(Long id) {
+        log.info("Getting user by id: {}", id);
+        return userRepository.findById(Math.toIntExact(id))
+                .map(this::toDto)
+                .orElse(null);
+    }
+
+    public void updateUser(Long id, UserDto userDto) {
+        log.info("Updating user with id: {}", id);
+        User user = userRepository.findById(Math.toIntExact(id))
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        user.setName(userDto.getName());
+        user.setSurname(userDto.getSurname());
+        user.setEmail(userDto.getEmail());
+        user.setAddress(userDto.getAddress());
+        user.setAlerting(userDto.isAlerting());
+        user.setEnergyAlertingThreshold(userDto.getEnergyAlertingThreshold());
+
+        userRepository.save(user);
+    }
+
+    public void deleteUser(Long id) {
+        log.info("Deleting user with id = {}", id);
+        User user = userRepository.findById(Math.toIntExact(id))
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        userRepository.delete(user);
+    }
+
+    private UserDto toDto(User user) {
         return UserDto.builder()
                 .id(user.getId())
                 .name(user.getName())
