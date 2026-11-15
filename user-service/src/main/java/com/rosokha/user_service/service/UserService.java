@@ -2,6 +2,7 @@ package com.rosokha.user_service.service;
 
 import com.rosokha.user_service.dto.UserDto;
 import com.rosokha.user_service.entity.User;
+import com.rosokha.user_service.exception.UserNotFoundException;
 import com.rosokha.user_service.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +35,12 @@ public class UserService {
     public UserDto getUserById(Long id) {
         return userRepository.findById(Math.toIntExact(id))
                 .map(this::toDto)
-                .orElse(null);
+                .orElseThrow(() -> new UserNotFoundException("User with id = " + id + " not found"));
     }
 
     public void updateUser(Long id, UserDto userDto) {
         User user = userRepository.findById(Math.toIntExact(id))
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User with id = " + id + " not found"));
 
         user.setName(userDto.getName());
         user.setSurname(userDto.getSurname());
@@ -53,7 +54,7 @@ public class UserService {
 
     public void deleteUser(Long id) {
         User user = userRepository.findById(Math.toIntExact(id))
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User with id = " + id + " not found"));
 
         userRepository.delete(user);
     }
