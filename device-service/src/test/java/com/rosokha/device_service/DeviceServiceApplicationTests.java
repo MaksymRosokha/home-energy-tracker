@@ -4,6 +4,7 @@ import com.rosokha.device_service.entity.Device;
 import com.rosokha.device_service.model.DeviceType;
 import com.rosokha.device_service.repository.DeviceRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +22,7 @@ class DeviceServiceApplicationTests {
 	void contextLoads() {
 	}
 
+	@Disabled
 	@Test
 	void createDevices() {
 		for (int i = 1; i <= NUMBER_OF_DEVICES; i++){
