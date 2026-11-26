@@ -1,6 +1,8 @@
 package com.rosokha.usage_service.service;
 
 import com.influxdb.client.InfluxDBClient;
+import com.influxdb.client.domain.WritePrecision;
+import com.influxdb.client.write.Point;
 import com.rosokha.kafka.event.EnergyUsageEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +31,12 @@ public class UsageService {
     public void energyUsageEvent(EnergyUsageEvent energyUsageEvent){
         log.info("Received energy usage event: {}", energyUsageEvent);
 
+        Point point = Point.measurement("energy_usage")
+                .addTag("deviceId", String.valueOf(energyUsageEvent.deviceId()))
+                .addField("energyConsumed", energyUsageEvent.energyConsumed())
+                .time(energyUsageEvent.timestamp(), WritePrecision.MS);
 
+        influxDBClient.getWriteApiBlocking().writePoint(influxBucket, influxOrg, point);
     }
 
 
